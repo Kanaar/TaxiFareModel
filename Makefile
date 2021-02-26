@@ -59,3 +59,17 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
+
+# ----------------------------------
+#      SET GOOGLE CLOUD BUCKETS
+# ----------------------------------
+
+PROJECT_ID=wagon-bootcamp-306012
+BUCKET_NAME=wagon-bootcamp # Use your Project's name as it should be unique
+REGION=europe-west1 # Choose your region https://cloud.google.com/storage/docs/locations#available_locations
+
+set_project:
+    @gcloud config set project ${PROJECT_ID}
+
+create_bucket:
+    @gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
