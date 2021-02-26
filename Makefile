@@ -64,7 +64,7 @@ pypi:
 #      SET GOOGLE CLOUD BUCKETS
 # ----------------------------------
 PROJECT_ID=wagon-bootcamp-306012
-BUCKET_NAME=wagon-bootcamp # Use your Project's name as it should be unique
+BUCKET_NAME=wagon-kanaar # Use your Project's name as it should be unique
 REGION=europe-west1 # Choose your region https://cloud.google.com/storage/docs/locations#available_locations
 
 set_project:
@@ -72,3 +72,15 @@ set_project:
 
 create_bucket:
 	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
+
+# ----------------------------------
+#      UPLOAD DATASET TO GOOGLE CLOUD
+# ----------------------------------
+LOCAL_PATH="/Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv"
+BUCKET_FOLDER=data
+# BUCKET_FILE_NAME=another_file_name_if_I_so_desire.csv
+BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
+
+upload_data:
+	@gsutil cp /Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv gs://wagon-kanaar/data/train_1k.csv
+# 	@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
