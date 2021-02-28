@@ -8,7 +8,6 @@ def get_data(nrows=10_000):
     df = pd.read_csv(AWS_BUCKET_PATH, nrows=nrows)
     return df
 
-
 def clean_data(df, test=False):
     df = df.dropna(how='any', axis='rows')
     df = df[(df.dropoff_latitude != 0) | (df.dropoff_longitude != 0)]
@@ -22,7 +21,6 @@ def clean_data(df, test=False):
     df = df[df["dropoff_latitude"].between(left=40, right=42)]
     df = df[df["dropoff_longitude"].between(left=-74, right=-72.9)]
     return df
-
 
 if __name__ == '__main__':
     df = get_data()
