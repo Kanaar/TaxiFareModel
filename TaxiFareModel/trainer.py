@@ -1,4 +1,4 @@
-import TaxiFareModel.params
+from TaxiFareModel.params import *
 import mlflow
 import joblib
 from termcolor import colored
@@ -121,4 +121,4 @@ if __name__ == "__main__":
     rmse = trainer.evaluate(X_test, y_test)
     print(f"rmse: {rmse}")
     trainer.save_model()
-
+    # save_model_to_gcp(reg)

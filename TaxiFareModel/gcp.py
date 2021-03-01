@@ -1,5 +1,5 @@
 import os
-from TaxiFareModel.params
+from TaxiFareModel.params import *
 from google.cloud import storage
 from termcolor import colored
 

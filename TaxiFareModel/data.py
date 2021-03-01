@@ -1,5 +1,5 @@
 import pandas as pd
-from TaxiFareModel.params
+from TaxiFareModel.params import *
 
 def get_data(nrows=10_000):
     '''returns a DataFrame with nrows from s3 bucket'''
@@ -22,3 +22,4 @@ def clean_data(df, test=False):
 
 if __name__ == '__main__':
     df = get_data()
+    print(df.head(3))
