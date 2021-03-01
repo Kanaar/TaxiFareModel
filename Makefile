@@ -17,13 +17,20 @@ test:
 ftest:
 	@Write me
 
+# clean:
+# 	@rm -f */version.txt
+# 	@rm -f .coverage
+# 	@rm -fr */__pycache__ */*.pyc __pycache__
+# 	@rm -fr build dist
+# 	@rm -fr TaxiFareModel-*.dist-info
+# 	@rm -fr TaxiFareModel.egg-info
+
 clean:
 	@rm -f */version.txt
 	@rm -f .coverage
-	@rm -fr */__pycache__ */*.pyc __pycache__
-	@rm -fr build dist
-	@rm -fr TaxiFareModel-*.dist-info
-	@rm -fr TaxiFareModel.egg-info
+	@rm -fr */__pycache__ __pycache__
+	@rm -fr build dist *.dist-info *.egg-info
+	@rm -fr */*.pyc
 
 install:
 	@pip install . -U
@@ -64,7 +71,7 @@ pypi:
 #      SET GOOGLE CLOUD BUCKETS
 # ----------------------------------
 PROJECT_ID=wagon-bootcamp-306012
-BUCKET_NAME=wagon-kanaar # Use your Project's name as it should be unique
+BUCKET_NAME=wagon-kanaar# Use your Project's name as it should be unique
 REGION=europe-west1 # Choose your region https://cloud.google.com/storage/docs/locations#available_locations
 
 set_project:
@@ -76,11 +83,49 @@ create_bucket:
 # ----------------------------------
 #      UPLOAD DATASET TO GOOGLE CLOUD
 # ----------------------------------
-LOCAL_PATH="/Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv"
-BUCKET_FOLDER=data
-# BUCKET_FILE_NAME=another_file_name_if_I_so_desire.csv
+LOCAL_PATH=/Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv
+BUCKET_DATA_FOLDER=data
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
 
 upload_data:
-	@gsutil cp /Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv gs://wagon-kanaar/data/train_1k.csv
-# 	@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+# 	@gsutil cp /Users/Richard/code/Kanaar/TaxiFareModel/raw_data/train_1k.csv gs://wagon-kanaar/data/train_1k.csv
+	@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_DATA_FOLDER}/${BUCKET_FILE_NAME}
+
+run_locally:
+	@python -m ${PACKAGE_NAME}.${FILENAME}
+
+# ----------------------------------
+#      TRAINING
+# ----------------------------------
+
+BUCKET_TRAINING_FOLDER=trainings
+PYTHON_VERSION=3.7
+FRAMEWORK=scikit-learn
+RUNTIME_VERSION=1.15
+
+##### Package params  - - - - - - - - - - - - - - - - - - -
+
+PACKAGE_NAME=TaxiFareModel
+FILENAME=trainer
+
+##### Job - - - - - - - - - - - - - - - - - - - - - - - - -
+
+JOB_NAME=taxi_fare_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--stream-logs
+
+# ----------------------------------
+#      TRAINING
+# ----------------------------------
+
+run_api:
+	uvicorn api.fast:app --reload  # load web server with code autoreload
+

@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def haversine_vectorized(df,
                          start_lat="pickup_latitude",
                          start_lon="pickup_longitude",
