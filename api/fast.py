@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
 import pandas as pd
-from predict import get_model
 
 app = FastAPI()
 
@@ -30,6 +28,7 @@ def predict_fare(pickup_datetime, pickup_longitude, pickup_latitude, dropoff_lon
             "passenger_count": int(passenger_count)
              }
     X_pred = pd.DataFrame(data = params, index = [0])
-    model = get_model('model.joblib')
+    model = joblib.load('model.joblib')
     prediction = model.predict(X_pred)
     return prediction[0]
+
